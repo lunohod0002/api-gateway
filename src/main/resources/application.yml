@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway-auth-service
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 5s
+
+  cloud:
+    gateway:
+      routes:
+        - id: stations-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/stations/**
+          filters:
+            - StripPrefix=2
+
+jwt:
+  secret: "change-me-change-me-change-me-change-me-very-secret-key-256"
+  access-ttl-minutes: 15
+  refresh-ttl-days: 30

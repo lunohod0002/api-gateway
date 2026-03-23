@@ -1,5 +1,6 @@
 package com.example.vkr_api_gateway.config;
 
+import com.example.vkr_api_gateway.model.RefreshSession;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;

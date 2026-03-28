@@ -14,12 +14,20 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: stations-service
+        - id: station-service-stations
           uri: http://localhost:8081
           predicates:
             - Path=/api/stations/**
-          filters:
-            - StripPrefix=2
+
+        - id: station-service-attractions
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/attractions/**
+
+        - id: media-service-medias
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/medias/**
 
 jwt:
   secret: "change-me-change-me-change-me-change-me-very-secret-key-256"

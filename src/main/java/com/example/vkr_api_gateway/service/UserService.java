@@ -21,12 +21,6 @@ public class UserService {
                     .username("admin")
                     .passwordHash(new BCryptPasswordEncoder().encode("admin123"))
                     .roles(List.of("ROLE_ADMIN"))
-                    .build(),
-            "user", UserRecord.builder()
-                    .id(2L)
-                    .username("user")
-                    .passwordHash(new BCryptPasswordEncoder().encode("user123"))
-                    .roles(List.of("ROLE_USER"))
                     .build()
     );
 

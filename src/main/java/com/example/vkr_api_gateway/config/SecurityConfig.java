@@ -1,6 +1,5 @@
 package com.example.vkr_api_gateway.config;
 
-
 import com.example.vkr_api_gateway.security.JwtAuthenticationWebFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,9 +25,16 @@ public class SecurityConfig {
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .logout(ServerHttpSecurity.LogoutSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
+
+                        // auth endpoints
                         .pathMatchers(HttpMethod.POST, "/auth/login", "/auth/refresh").permitAll()
-                        .pathMatchers("/actuator/**").permitAll()
-                        .anyExchange().authenticated()
+                        .pathMatchers(HttpMethod.POST, "/auth/logout").authenticated()
+
+                        // admin only
+                        .pathMatchers(HttpMethod.POST, "/api/attractions").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.POST, "/api/medias").hasRole("ADMIN")
+                        // всё остальное публично
+                        .anyExchange().permitAll()
                 )
                 .addFilterAt(jwtAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();

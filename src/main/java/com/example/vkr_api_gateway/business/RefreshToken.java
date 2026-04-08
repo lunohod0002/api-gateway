@@ -1,4 +1,4 @@
-package com.example.vkr_api_gateway.model;
+package com.example.vkr_api_gateway.business;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RefreshSession {
+public class RefreshToken {
     private Long userId;
     private String deviceId;
     private String refreshTokenJti;

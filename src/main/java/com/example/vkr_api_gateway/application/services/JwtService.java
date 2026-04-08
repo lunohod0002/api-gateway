@@ -1,4 +1,4 @@
-package com.example.vkr_api_gateway.service;
+package com.example.vkr_api_gateway.application.services;
 
 import com.example.vkr_api_gateway.config.JwtProperties;
 import io.jsonwebtoken.Claims;

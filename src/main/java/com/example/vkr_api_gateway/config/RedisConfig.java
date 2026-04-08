@@ -1,6 +1,6 @@
 package com.example.vkr_api_gateway.config;
 
-import com.example.vkr_api_gateway.model.RefreshSession;
+import com.example.vkr_api_gateway.business.RefreshToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -15,7 +15,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 public class RedisConfig {
 
     @Bean
-    public ReactiveRedisTemplate<String, RefreshSession> refreshSessionRedisTemplate(
+    public ReactiveRedisTemplate<String, RefreshToken> refreshSessionRedisTemplate(
             ReactiveRedisConnectionFactory factory
     ) {
         StringRedisSerializer keySerializer = new StringRedisSerializer();
@@ -24,11 +24,11 @@ public class RedisConfig {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        Jackson2JsonRedisSerializer<RefreshSession> valueSerializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, RefreshSession.class);
+        Jackson2JsonRedisSerializer<RefreshToken> valueSerializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, RefreshToken.class);
 
-        RedisSerializationContext<String, RefreshSession> context =
-                RedisSerializationContext.<String, RefreshSession>newSerializationContext(keySerializer)
+        RedisSerializationContext<String, RefreshToken> context =
+                RedisSerializationContext.<String, RefreshToken>newSerializationContext(keySerializer)
                         .value(valueSerializer)
                         .hashKey(keySerializer)
                         .hashValue(valueSerializer)

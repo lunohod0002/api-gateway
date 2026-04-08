@@ -1,11 +1,11 @@
-package com.example.vkr_api_gateway.controller;
+package com.example.vkr_api_gateway.presentation;
 
-import com.example.vkr_api_gateway.dto.LoginRequest;
-import com.example.vkr_api_gateway.dto.LogoutRequest;
-import com.example.vkr_api_gateway.dto.RefreshRequest;
-import com.example.vkr_api_gateway.dto.TokenResponse;
+import com.example.vkr_api_gateway.application.dto.LoginRequest;
+import com.example.vkr_api_gateway.application.dto.LogoutRequest;
+import com.example.vkr_api_gateway.application.dto.RefreshRequest;
+import com.example.vkr_api_gateway.application.dto.TokenResponse;
 import jakarta.validation.Valid;
-import com.example.vkr_api_gateway.service.AuthService;
+import com.example.vkr_api_gateway.application.services.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;

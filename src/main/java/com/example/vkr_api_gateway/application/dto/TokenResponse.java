@@ -1,4 +1,4 @@
-package com.example.vkr_api_gateway.dto;
+package com.example.vkr_api_gateway.application.dto;
 
 import lombok.Builder;
 import lombok.Data;

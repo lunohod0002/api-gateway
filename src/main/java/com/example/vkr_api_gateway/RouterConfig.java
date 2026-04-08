@@ -16,6 +16,9 @@ public class RouterConfig {
                 .route("station-service-id", r -> r
                         .path("/api/stations/**")
                         .uri("http://localhost:8081"))
+                .route("station-attraction-service-id", r -> r
+                        .path("/api/attractions/**")
+                        .uri("http://localhost:8081"))
                 .route("media-service-id", r -> r
                     .path("/api/medias/**")
                     .uri("http://localhost:8082"))

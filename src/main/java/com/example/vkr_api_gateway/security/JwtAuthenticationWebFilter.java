@@ -1,7 +1,7 @@
 package com.example.vkr_api_gateway.security;
 
 
-import com.example.vkr_api_gateway.service.JwtService;
+import com.example.vkr_api_gateway.application.services.JwtService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;

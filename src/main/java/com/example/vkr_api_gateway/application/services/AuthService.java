@@ -1,11 +1,11 @@
-package com.example.vkr_api_gateway.service;
+package com.example.vkr_api_gateway.application.services;
 
 
-import com.example.vkr_api_gateway.dto.LoginRequest;
-import com.example.vkr_api_gateway.dto.RefreshRequest;
-import com.example.vkr_api_gateway.dto.TokenResponse;
-import com.example.vkr_api_gateway.model.RefreshSession;
-import com.example.vkr_api_gateway.repository.RefreshSessionRepository;
+import com.example.vkr_api_gateway.application.dto.LoginRequest;
+import com.example.vkr_api_gateway.application.dto.RefreshRequest;
+import com.example.vkr_api_gateway.application.dto.TokenResponse;
+import com.example.vkr_api_gateway.business.RefreshToken;
+import com.example.vkr_api_gateway.data.RedisRefreshTokenRepository;
 import com.example.vkr_api_gateway.util.HashUtils;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class AuthService {
 
     private final UserService userService;
     private final JwtService jwtService;
-    private final RefreshSessionRepository refreshSessionRepository;
+    private final RedisRefreshTokenRepository redisRefreshTokenRepository;
 
     public Mono<TokenResponse> login(LoginRequest request) {
         return userService.validate(request.getUsername(), request.getPassword())
@@ -32,7 +32,7 @@ public class AuthService {
 
                     Claims refreshClaims = jwtService.parse(refreshToken);
 
-                    RefreshSession session = RefreshSession.builder()
+                    RefreshToken session = RefreshToken.builder()
                             .userId(user.getId())
                             .deviceId(request.getDeviceId())
                             .refreshTokenJti(jwtService.getJti(refreshClaims))
@@ -42,7 +42,7 @@ public class AuthService {
                             .revoked(false)
                             .build();
 
-                    return refreshSessionRepository.save(
+                    return redisRefreshTokenRepository.save(
                                     session,
                                     Duration.ofSeconds(jwtService.getRefreshTtlSeconds())
                             )
@@ -72,7 +72,7 @@ public class AuthService {
                         return Mono.error(new RuntimeException("Device mismatch"));
                     }
 
-                    return refreshSessionRepository.findByUserIdAndDeviceId(userId, request.getDeviceId())
+                    return redisRefreshTokenRepository.findByUserIdAndDeviceId(userId, request.getDeviceId())
                             .switchIfEmpty(Mono.error(new RuntimeException("Session not found")))
                             .flatMap(session -> {
                                 if (session.isRevoked()) {
@@ -98,7 +98,7 @@ public class AuthService {
                                 String newRefreshToken = jwtService.generateRefreshToken(userId, request.getDeviceId());
                                 Claims newRefreshClaims = jwtService.parse(newRefreshToken);
 
-                                RefreshSession newSession = RefreshSession.builder()
+                                RefreshToken newSession = RefreshToken.builder()
                                         .userId(userId)
                                         .deviceId(request.getDeviceId())
                                         .refreshTokenJti(jwtService.getJti(newRefreshClaims))
@@ -108,7 +108,7 @@ public class AuthService {
                                         .revoked(false)
                                         .build();
 
-                                return refreshSessionRepository.save(
+                                return redisRefreshTokenRepository.save(
                                                 newSession,
                                                 Duration.ofSeconds(jwtService.getRefreshTtlSeconds())
                                         )
@@ -125,6 +125,6 @@ public class AuthService {
     }
 
     public Mono<Void> logout(Long userId, String deviceId) {
-        return refreshSessionRepository.deleteByUserIdAndDeviceId(userId, deviceId).then();
+        return redisRefreshTokenRepository.deleteByUserIdAndDeviceId(userId, deviceId).then();
     }
 }

@@ -1,6 +1,6 @@
-package com.example.vkr_api_gateway.business.repository;
+package com.example.vkr_api_gateway.domain.repository;
 
-import com.example.vkr_api_gateway.business.RefreshToken;
+import com.example.vkr_api_gateway.domain.RefreshToken;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;

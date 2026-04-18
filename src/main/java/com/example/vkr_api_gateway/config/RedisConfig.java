@@ -1,6 +1,6 @@
 package com.example.vkr_api_gateway.config;
 
-import com.example.vkr_api_gateway.business.RefreshToken;
+import com.example.vkr_api_gateway.domain.RefreshToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

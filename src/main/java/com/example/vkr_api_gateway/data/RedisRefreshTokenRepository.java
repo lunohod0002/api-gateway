@@ -1,7 +1,7 @@
 package com.example.vkr_api_gateway.data;
 
-import com.example.vkr_api_gateway.business.RefreshToken;
-import com.example.vkr_api_gateway.business.repository.RefreshTokenRepository;
+import com.example.vkr_api_gateway.domain.RefreshToken;
+import com.example.vkr_api_gateway.domain.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Repository;

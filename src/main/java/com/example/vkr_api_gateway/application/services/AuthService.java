@@ -4,7 +4,7 @@ package com.example.vkr_api_gateway.application.services;
 import com.example.vkr_api_gateway.application.dto.LoginRequest;
 import com.example.vkr_api_gateway.application.dto.RefreshRequest;
 import com.example.vkr_api_gateway.application.dto.TokenResponse;
-import com.example.vkr_api_gateway.business.RefreshToken;
+import com.example.vkr_api_gateway.domain.RefreshToken;
 import com.example.vkr_api_gateway.data.RedisRefreshTokenRepository;
 import com.example.vkr_api_gateway.util.HashUtils;
 import io.jsonwebtoken.Claims;

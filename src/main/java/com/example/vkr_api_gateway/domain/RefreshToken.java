@@ -1,4 +1,4 @@
-package com.example.vkr_api_gateway.business;
+package com.example.vkr_api_gateway.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

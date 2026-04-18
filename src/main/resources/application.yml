@@ -31,5 +31,5 @@ spring:
 
 jwt:
   secret: "change-me-change-me-change-me-change-me-very-secret-key-256"
-  access-ttl-minutes: 1
+  access-ttl-minutes: 15
   refresh-ttl-days: 30

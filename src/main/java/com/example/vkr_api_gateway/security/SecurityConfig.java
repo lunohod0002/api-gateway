@@ -1,6 +1,5 @@
-package com.example.vkr_api_gateway.config;
+package com.example.vkr_api_gateway.security;
 
-import com.example.vkr_api_gateway.security.JwtAuthenticationWebFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

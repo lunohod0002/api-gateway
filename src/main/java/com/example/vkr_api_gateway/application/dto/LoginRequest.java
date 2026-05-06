@@ -11,10 +11,5 @@ public class LoginRequest {
     @NotBlank
     private String password;
 
-    /**
-     * Клиент обязан прислать deviceId.
-     * Например UUID, сохраненный на клиенте.
-     */
-    @NotBlank
-    private String deviceId;
+
 }

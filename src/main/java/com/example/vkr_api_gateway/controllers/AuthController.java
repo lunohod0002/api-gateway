@@ -1,4 +1,4 @@
-package com.example.vkr_api_gateway.presentation;
+package com.example.vkr_api_gateway.controllers;
 
 import com.example.vkr_api_gateway.application.dto.LoginRequest;
 import com.example.vkr_api_gateway.application.dto.LogoutRequest;
@@ -31,11 +31,4 @@ public class AuthController {
                 .map(ResponseEntity::ok);
     }
 
-    @PostMapping("/logout")
-    public Mono<ResponseEntity<Void>> logout(@Valid @RequestBody LogoutRequest request) {
-        return ReactiveSecurityContextHolder.getContext()
-                .map(ctx -> (Long) ctx.getAuthentication().getPrincipal())
-                .flatMap(userId -> authService.logout(userId, request.getDeviceId()))
-                .thenReturn(ResponseEntity.noContent().build());
-    }
 }

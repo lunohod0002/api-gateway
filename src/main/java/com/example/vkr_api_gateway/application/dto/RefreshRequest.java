@@ -9,6 +9,4 @@ public class RefreshRequest {
     @NotBlank
     private String refreshToken;
 
-    @NotBlank
-    private String deviceId;
 }

@@ -31,7 +31,7 @@ public class SecurityConfig {
 
                         // admin only
                         .pathMatchers(HttpMethod.POST, "/api/attractions").hasRole("ADMIN")
-                        .pathMatchers(HttpMethod.POST, "/api/medias").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.POST, "/api/medias/upload").hasRole("ADMIN")
                         // всё остальное публично
                         .anyExchange().permitAll()
                 )

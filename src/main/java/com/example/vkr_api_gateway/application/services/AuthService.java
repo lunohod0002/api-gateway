@@ -27,14 +27,13 @@ public class AuthService {
         return userService.validate(request.getUsername(), request.getPassword())
                 .switchIfEmpty(Mono.error(new RuntimeException("Invalid credentials")))
                 .flatMap(user -> {
-                    String accessToken = jwtService.generateAccessToken(user.getId(), request.getDeviceId(), user.getRoles());
-                    String refreshToken = jwtService.generateRefreshToken(user.getId(), request.getDeviceId());
+                    String accessToken = jwtService.generateAccessToken(user.getId(), user.getRoles());
+                    String refreshToken = jwtService.generateRefreshToken(user.getId());
 
                     Claims refreshClaims = jwtService.parse(refreshToken);
 
                     RefreshToken session = RefreshToken.builder()
                             .userId(user.getId())
-                            .deviceId(request.getDeviceId())
                             .refreshTokenJti(jwtService.getJti(refreshClaims))
                             .refreshTokenHash(HashUtils.sha256(refreshToken))
                             .createdAt(Instant.now())
@@ -52,7 +51,6 @@ public class AuthService {
                                     .refreshToken(refreshToken)
                                     .accessExpiresIn(jwtService.getAccessTtlSeconds())
                                     .refreshExpiresIn(jwtService.getRefreshTtlSeconds())
-                                    .deviceId(request.getDeviceId())
                                     .build());
                 });
     }
@@ -65,14 +63,10 @@ public class AuthService {
                     }
 
                     Long userId = jwtService.getUserId(claims);
-                    String tokenDeviceId = jwtService.getDeviceId(claims);
                     String jti = jwtService.getJti(claims);
 
-                    if (!request.getDeviceId().equals(tokenDeviceId)) {
-                        return Mono.error(new RuntimeException("Device mismatch"));
-                    }
 
-                    return redisRefreshTokenRepository.findByUserIdAndDeviceId(userId, request.getDeviceId())
+                    return redisRefreshTokenRepository.findByUserId(userId)
                             .switchIfEmpty(Mono.error(new RuntimeException("Session not found")))
                             .flatMap(session -> {
                                 if (session.isRevoked()) {
@@ -94,13 +88,12 @@ public class AuthService {
                                         ? java.util.List.of("ROLE_ADMIN")
                                         : java.util.List.of("ROLE_USER");
 
-                                String newAccessToken = jwtService.generateAccessToken(userId, request.getDeviceId(), roles);
-                                String newRefreshToken = jwtService.generateRefreshToken(userId, request.getDeviceId());
+                                String newAccessToken = jwtService.generateAccessToken(userId, roles);
+                                String newRefreshToken = jwtService.generateRefreshToken(userId);
                                 Claims newRefreshClaims = jwtService.parse(newRefreshToken);
 
                                 RefreshToken newSession = RefreshToken.builder()
                                         .userId(userId)
-                                        .deviceId(request.getDeviceId())
                                         .refreshTokenJti(jwtService.getJti(newRefreshClaims))
                                         .refreshTokenHash(HashUtils.sha256(newRefreshToken))
                                         .createdAt(Instant.now())
@@ -118,13 +111,12 @@ public class AuthService {
                                                 .refreshToken(newRefreshToken)
                                                 .accessExpiresIn(jwtService.getAccessTtlSeconds())
                                                 .refreshExpiresIn(jwtService.getRefreshTtlSeconds())
-                                                .deviceId(request.getDeviceId())
                                                 .build());
                             });
                 });
     }
 
-    public Mono<Void> logout(Long userId, String deviceId) {
-        return redisRefreshTokenRepository.deleteByUserIdAndDeviceId(userId, deviceId).then();
+    public Mono<Void> logout(Long userId) {
+        return redisRefreshTokenRepository.deleteByUserId(userId).then();
     }
 }

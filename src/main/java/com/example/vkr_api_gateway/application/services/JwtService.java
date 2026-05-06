@@ -27,14 +27,13 @@ public class JwtService {
         this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(Long userId, String deviceId, List<String> roles) {
+    public String generateAccessToken(Long userId, List<String> roles) {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(jwtProperties.getAccessTtlMinutes() * 60);
 
         return Jwts.builder()
                 .subject(String.valueOf(userId))
                 .claim("type", "access")
-                .claim("deviceId", deviceId)
                 .claim("roles", roles)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))
@@ -43,14 +42,13 @@ public class JwtService {
                 .compact();
     }
 
-    public String generateRefreshToken(Long userId, String deviceId) {
+    public String generateRefreshToken(Long userId) {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(jwtProperties.getRefreshTtlDays() * 24 * 60 * 60);
 
         return Jwts.builder()
                 .subject(String.valueOf(userId))
                 .claim("type", "refresh")
-                .claim("deviceId", deviceId)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))
                 .id(UUID.randomUUID().toString())
@@ -78,9 +76,6 @@ public class JwtService {
         return Long.valueOf(claims.getSubject());
     }
 
-    public String getDeviceId(Claims claims) {
-        return claims.get("deviceId", String.class);
-    }
 
     public List<String> getRoles(Claims claims) {
         return claims.get("roles", List.class);

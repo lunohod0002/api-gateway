@@ -11,5 +11,4 @@ public class TokenResponse {
     private String refreshToken;
     private long accessExpiresIn;
     private long refreshExpiresIn;
-    private String deviceId;
 }

@@ -1,4 +1,4 @@
-package com.example.vkr_api_gateway.presentation;
+package com.example.vkr_api_gateway.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

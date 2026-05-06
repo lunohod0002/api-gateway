@@ -47,7 +47,6 @@ public class JwtAuthenticationWebFilter implements WebFilter {
             }
 
             Long userId = jwtService.getUserId(claims);
-            String deviceId = jwtService.getDeviceId(claims);
             List<String> roles = jwtService.getRoles(claims);
 
             var authorities = roles == null ? List.<SimpleGrantedAuthority>of()
@@ -57,7 +56,6 @@ public class JwtAuthenticationWebFilter implements WebFilter {
 
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                     .header("X-User-Id", String.valueOf(userId))
-                    .header("X-Device-Id", deviceId)
                     .build();
 
             return chain.filter(exchange.mutate().request(mutatedRequest).build())

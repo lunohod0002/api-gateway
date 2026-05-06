@@ -15,20 +15,20 @@ public class RedisRefreshTokenRepository implements RefreshTokenRepository {
 
     private final ReactiveRedisTemplate<String, RefreshToken> redisTemplate;
 
-    private String key(Long userId, String deviceId) {
-        return "auth:refresh:" + userId + ":" + deviceId;
+    private String key(Long userId) {
+        return "auth:refresh:" + userId;
     }
 
     public Mono<Boolean> save(RefreshToken session, Duration ttl) {
         return redisTemplate.opsForValue()
-                .set(key(session.getUserId(), session.getDeviceId()), session, ttl);
+                .set(key(session.getUserId()), session, ttl);
     }
 
-    public Mono<RefreshToken> findByUserIdAndDeviceId(Long userId, String deviceId) {
-        return redisTemplate.opsForValue().get(key(userId, deviceId));
+    public Mono<RefreshToken> findByUserId(Long userId) {
+        return redisTemplate.opsForValue().get(key(userId));
     }
 
-    public Mono<Boolean> deleteByUserIdAndDeviceId(Long userId, String deviceId) {
-        return redisTemplate.delete(key(userId, deviceId)).map(count -> count > 0);
+    public Mono<Boolean> deleteByUserId(Long userId) {
+        return redisTemplate.delete(key(userId)).map(count -> count > 0);
     }
 }

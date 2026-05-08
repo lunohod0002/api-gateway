@@ -10,5 +10,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class JwtProperties {
     private String secret;
     private long accessTtlMinutes;
-    private long refreshTtlDays;
+    private long  refreshTtlMinutes;
 }

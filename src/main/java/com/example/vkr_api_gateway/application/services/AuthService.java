@@ -3,6 +3,7 @@ package com.example.vkr_api_gateway.application.services;
 
 import com.example.vkr_api_gateway.application.dto.LoginRequest;
 import com.example.vkr_api_gateway.application.dto.RefreshRequest;
+import com.example.vkr_api_gateway.application.dto.RefreshResponse;
 import com.example.vkr_api_gateway.application.dto.TokenResponse;
 import com.example.vkr_api_gateway.domain.RefreshToken;
 import com.example.vkr_api_gateway.data.RedisRefreshTokenRepository;
@@ -14,6 +15,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +57,7 @@ public class AuthService {
                 });
     }
 
-    public Mono<TokenResponse> refresh(RefreshRequest request) {
+    public Mono<RefreshResponse> refresh(RefreshRequest request) {
         return Mono.fromCallable(() -> jwtService.parse(request.getRefreshToken()))
                 .flatMap(claims -> {
                     if (!jwtService.isRefreshToken(claims)) {
@@ -65,53 +67,30 @@ public class AuthService {
                     Long userId = jwtService.getUserId(claims);
                     String jti = jwtService.getJti(claims);
 
-
                     return redisRefreshTokenRepository.findByUserId(userId)
                             .switchIfEmpty(Mono.error(new RuntimeException("Session not found")))
-                            .flatMap(session -> {
-                                if (session.isRevoked()) {
+                            .flatMap(token -> {
+                                if (token.isRevoked()) {
                                     return Mono.error(new RuntimeException("Session revoked"));
                                 }
 
                                 String incomingHash = HashUtils.sha256(request.getRefreshToken());
 
-                                if (!session.getRefreshTokenJti().equals(jti)) {
+                                if (!token.getRefreshTokenJti().equals(jti)) {
                                     return Mono.error(new RuntimeException("Refresh token JTI mismatch"));
                                 }
 
-                                if (!session.getRefreshTokenHash().equals(incomingHash)) {
+                                if (!token.getRefreshTokenHash().equals(incomingHash)) {
                                     return Mono.error(new RuntimeException("Refresh token hash mismatch"));
                                 }
 
-                                // Для примера роль зашиваем по userId
                                 var roles = userId == 1L
                                         ? java.util.List.of("ROLE_ADMIN")
                                         : java.util.List.of("ROLE_USER");
 
                                 String newAccessToken = jwtService.generateAccessToken(userId, roles);
-                                String newRefreshToken = jwtService.generateRefreshToken(userId);
-                                Claims newRefreshClaims = jwtService.parse(newRefreshToken);
 
-                                RefreshToken newSession = RefreshToken.builder()
-                                        .userId(userId)
-                                        .refreshTokenJti(jwtService.getJti(newRefreshClaims))
-                                        .refreshTokenHash(HashUtils.sha256(newRefreshToken))
-                                        .createdAt(Instant.now())
-                                        .expiresAt(newRefreshClaims.getExpiration().toInstant())
-                                        .revoked(false)
-                                        .build();
-
-                                return redisRefreshTokenRepository.save(
-                                                newSession,
-                                                Duration.ofSeconds(jwtService.getRefreshTtlSeconds())
-                                        )
-                                        .thenReturn(TokenResponse.builder()
-                                                .tokenType("Bearer")
-                                                .accessToken(newAccessToken)
-                                                .refreshToken(newRefreshToken)
-                                                .accessExpiresIn(jwtService.getAccessTtlSeconds())
-                                                .refreshExpiresIn(jwtService.getRefreshTtlSeconds())
-                                                .build());
+                                return Mono.just(new RefreshResponse(newAccessToken));
                             });
                 });
     }

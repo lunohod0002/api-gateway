@@ -1,9 +1,6 @@
 package com.example.vkr_api_gateway.controllers;
 
-import com.example.vkr_api_gateway.application.dto.LoginRequest;
-import com.example.vkr_api_gateway.application.dto.LogoutRequest;
-import com.example.vkr_api_gateway.application.dto.RefreshRequest;
-import com.example.vkr_api_gateway.application.dto.TokenResponse;
+import com.example.vkr_api_gateway.application.dto.*;
 import jakarta.validation.Valid;
 import com.example.vkr_api_gateway.application.services.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +23,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public Mono<ResponseEntity<TokenResponse>> refresh(@Valid @RequestBody RefreshRequest request) {
+    public Mono<ResponseEntity<RefreshResponse>> refresh(@Valid @RequestBody RefreshRequest request) {
         return authService.refresh(request)
                 .map(ResponseEntity::ok);
     }

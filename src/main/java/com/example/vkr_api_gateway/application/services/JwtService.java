@@ -44,7 +44,7 @@ public class JwtService {
 
     public String generateRefreshToken(Long userId) {
         Instant now = Instant.now();
-        Instant exp = now.plusSeconds(jwtProperties.getRefreshTtlDays() * 24 * 60 * 60);
+        Instant exp = now.plusSeconds(jwtProperties.getRefreshTtlMinutes() * 60);
 
         return Jwts.builder()
                 .subject(String.valueOf(userId))
@@ -90,6 +90,6 @@ public class JwtService {
     }
 
     public long getRefreshTtlSeconds() {
-        return jwtProperties.getRefreshTtlDays() * 24 * 60 * 60;
+        return jwtProperties.getRefreshTtlMinutes() *  60;
     }
 }
